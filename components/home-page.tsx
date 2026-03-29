@@ -319,49 +319,58 @@ export function HomePage() {
             title={toText(uiText.section.papers.title, locale)}
             subtitle={toText(uiText.section.papers.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <a href="/papers/PAHSJP-301005-G11-final.pdf" target="_blank" rel="noreferrer" data-cursor="link">
-              <PlaceholderCardItem
-                item={{
-                  title:
-                    locale === "zh"
-                      ? "Machine Learning-based Downscaling of Sentinel-5P CO over Beijing"
-                      : "Machine Learning-based Downscaling of Sentinel-5P CO over Beijing",
-                  subtitle:
-                    locale === "zh"
-                      ? "论文原文 PDF（终稿）：LightGBM、CatBoost、Ridge 对比，滚动月度验证，北京 3 km CO 降尺度。"
-                      : "Original paper PDF (final): LightGBM/CatBoost/Ridge comparison with rolling monthly validation and 3 km CO downscaling over Beijing.",
-                  badge: locale === "zh" ? "论文原文" : "Original PDF"
-                }}
-                scale="lg"
-                ctaLabel={locale === "zh" ? "打开论文" : "Open Paper"}
-              />
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <a
+              href="/papers/PAHSJP-301005-G11-final.pdf"
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="link"
+              className="group relative overflow-hidden rounded-[1.2rem] border border-white/12 min-h-[280px]"
+            >
+              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper1-cover.jpg')" }} />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/85" />
+              <div className="absolute inset-0 p-5">
+                <div className="inline-flex rounded-full border border-white/25 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.14em] text-text">
+                  {locale === "zh" ? "论文原文 PDF" : "Original PDF"}
+                </div>
+                <h3 className="mt-4 text-xl leading-tight text-text">
+                  Machine Learning-based Downscaling of Sentinel-5P CO over Beijing
+                </h3>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
+                  {["Sentinel-5P", "LightGBM", "CatBoost", "Ridge", "Urban CO"].map((k) => (
+                    <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
+                      {k}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </a>
-            <a href="/papers/1110-Wu-CPCI-final.docx" target="_blank" rel="noreferrer" data-cursor="link">
-              <PlaceholderCardItem
-                item={{
-                  title: locale === "zh" ? "1110吴CPCI终稿（第二篇论文）" : "1110 Wu CPCI Final (Second Paper)",
-                  subtitle:
-                    locale === "zh"
-                      ? "论文原文 DOCX：已上传到主页并可直接打开。后续可替换为正式公开 PDF 版本。"
-                      : "Original paper DOCX uploaded to the portfolio and available for direct opening. Can be replaced by public PDF later.",
-                  badge: locale === "zh" ? "论文原文" : "Original DOCX"
-                }}
-                scale="lg"
-                ctaLabel={locale === "zh" ? "打开论文" : "Open Paper"}
-              />
+
+            <a
+              href="/papers/1110-Wu-CPCI-final.docx"
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="link"
+              className="group relative overflow-hidden rounded-[1.2rem] border border-white/12 min-h-[280px]"
+            >
+              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper2-cover.jpg')" }} />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/85" />
+              <div className="absolute inset-0 p-5">
+                <div className="inline-flex rounded-full border border-white/25 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.14em] text-text">
+                  {locale === "zh" ? "论文原文 DOCX" : "Original DOCX"}
+                </div>
+                <h3 className="mt-4 text-xl leading-tight text-text">
+                  Multi-stage Elimination-Optimization for Cooperative Smoke-Screen Scheduling Against Multiple Missiles
+                </h3>
+                <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
+                  {["Smoke Screen", "UAV Scheduling", "Geometric Occlusion", "Multi-Missile Defense", "Optimization"].map((k) => (
+                    <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
+                      {k}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </a>
-            <PlaceholderCardItem
-              item={{
-                title: locale === "zh" ? "论文摘要与贡献" : "Paper Summary & Contributions",
-                subtitle:
-                  locale === "zh"
-                    ? "核心发现：树模型显著优于线性基线；在严格时序验证下实现稳定城市尺度近地面 CO 估计。"
-                    : "Key finding: tree ensembles outperform linear baseline and provide robust city-scale near-surface CO estimation under strict temporal validation."
-              }}
-              scale="md"
-              ctaLabel={locale === "zh" ? "摘要" : "Summary"}
-            />
           </div>
         </section>
 
