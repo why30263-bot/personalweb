@@ -1,0 +1,25 @@
+project:
+  name: smoke-screen-scheduling-repro
+  version: 0.1.0
+
+scenario:
+  dt: 0.05
+  horizon_seconds: 120
+  target_radius: 6.0
+  smoke_radius: 16.0
+  smoke_sink_rate: 0.4
+
+optimization:
+  objective: max_total_occlusion_time
+  heading_step_deg: 1.0
+  release_time_step: 0.1
+  use_integer_programming: true
+
+baselines:
+  enabled: true
+  strategy: fixed_heading_fixed_release
+
+io:
+  outputs_dir: outputs
+  figures_dir: outputs/figures
+  tables_dir: outputs/tables

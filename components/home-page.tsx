@@ -319,7 +319,7 @@ export function HomePage() {
             title={toText(uiText.section.papers.title, locale)}
             subtitle={toText(uiText.section.papers.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="mt-6 grid gap-4 md:grid-cols-3">
             <a href="/papers/PAHSJP-301005-G11-final.pdf" target="_blank" rel="noreferrer" data-cursor="link">
               <PlaceholderCardItem
                 item={{
@@ -332,6 +332,20 @@ export function HomePage() {
                       ? "论文原文 PDF（终稿）：LightGBM、CatBoost、Ridge 对比，滚动月度验证，北京 3 km CO 降尺度。"
                       : "Original paper PDF (final): LightGBM/CatBoost/Ridge comparison with rolling monthly validation and 3 km CO downscaling over Beijing.",
                   badge: locale === "zh" ? "论文原文" : "Original PDF"
+                }}
+                scale="lg"
+                ctaLabel={locale === "zh" ? "打开论文" : "Open Paper"}
+              />
+            </a>
+            <a href="/papers/1110-Wu-CPCI-final.docx" target="_blank" rel="noreferrer" data-cursor="link">
+              <PlaceholderCardItem
+                item={{
+                  title: locale === "zh" ? "1110吴CPCI终稿（第二篇论文）" : "1110 Wu CPCI Final (Second Paper)",
+                  subtitle:
+                    locale === "zh"
+                      ? "论文原文 DOCX：已上传到主页并可直接打开。后续可替换为正式公开 PDF 版本。"
+                      : "Original paper DOCX uploaded to the portfolio and available for direct opening. Can be replaced by public PDF later.",
+                  badge: locale === "zh" ? "论文原文" : "Original DOCX"
                 }}
                 scale="lg"
                 ctaLabel={locale === "zh" ? "打开论文" : "Open Paper"}

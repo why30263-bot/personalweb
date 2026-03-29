@@ -51,6 +51,12 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
 
   const items = useMemo(() => data?.items ?? [], [data]);
 
+  const coverUrl = (cover?: string) => {
+    if (!cover) return "";
+    if (cover.startsWith("/")) return cover;
+    return `/api/image?src=${encodeURIComponent(cover)}`;
+  };
+
   return (
     <div className="rounded-[1.4rem] border border-white/12 bg-surface/75 p-4 md:p-5">
       <div className="mb-4 flex items-center justify-between gap-4">
@@ -87,7 +93,9 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
                 style={{
-                  backgroundImage: item.cover ? `url(${item.cover})` : "radial-gradient(circle at 30% 20%, rgba(201,106,43,0.25), rgba(18,18,18,0.9))"
+                  backgroundImage: item.cover
+                    ? `url(${coverUrl(item.cover)})`
+                    : "radial-gradient(circle at 30% 20%, rgba(201,106,43,0.35), rgba(18,18,18,0.9))"
                 }}
               />
               <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/75" />

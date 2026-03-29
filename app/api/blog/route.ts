@@ -21,6 +21,12 @@ function parseViews(text: string) {
   return Number.isFinite(n) ? n : 0;
 }
 
+function normalizeUrl(u: string) {
+  if (!u) return "";
+  if (u.startsWith("//")) return `https:${u}`;
+  return u;
+}
+
 async function getCoverFromArticle(url: string) {
   try {
     const res = await fetch(url, { headers: { "user-agent": "Mozilla/5.0" }, next: { revalidate: 1800 } });
@@ -59,13 +65,17 @@ export async function GET() {
       if (!href || !title) continue;
 
       const url = href.startsWith("http") ? href : `https://blog.csdn.net${href.startsWith("/") ? "" : "/"}${href}`;
-      const img = el.find("img").first().attr("src") || "";
+      const img =
+        el.find("img").first().attr("data-src") ||
+        el.find("img").first().attr("src") ||
+        el.find(".article-item-img").first().attr("src") ||
+        "";
       const viewText = el.find(".read-num, .view-num, .num").first().text() || "";
 
       raw.push({
         title,
         url,
-        cover: img,
+        cover: normalizeUrl(img),
         views: parseViews(viewText)
       });
     }
