@@ -11,6 +11,10 @@ import {
   papersCards,
   researchCards,
   resumeCards,
+  type Locale,
+  type LocalizedCard,
+  type LocalizedText,
+  uiText,
   volunteerCards
 } from "@/data/site";
 import { CustomCursor } from "@/components/custom-cursor";
@@ -24,11 +28,44 @@ import { CHIP_WIDTHS } from "@/lib/design-tokens";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
+const sectionTint: Record<string, string> = {
+  hero: "radial-gradient(circle at 70% 8%, rgba(201,106,43,0.22), transparent 45%)",
+  focus: "radial-gradient(circle at 25% 20%, rgba(208,255,0,0.09), transparent 46%)",
+  about: "radial-gradient(circle at 82% 22%, rgba(201,106,43,0.16), transparent 48%)",
+  research: "radial-gradient(circle at 16% 18%, rgba(208,255,0,0.08), transparent 45%)",
+  papers: "radial-gradient(circle at 40% 10%, rgba(201,106,43,0.18), transparent 42%)"
+};
+
+function toText(value: LocalizedText, locale: Locale) {
+  return value[locale];
+}
+
+function toCard(item: LocalizedCard, locale: Locale) {
+  return {
+    title: item.title[locale],
+    subtitle: item.subtitle[locale],
+    badge: item.badge?.[locale]
+  };
+}
+
 export function HomePage() {
   const [activeSection, setActiveSection] = useState("hero");
-  const [activeTag, setActiveTag] = useState(focusTags[0]);
+  const [locale, setLocale] = useState<Locale>("zh");
+  const [activeTag, setActiveTag] = useState(toText(focusTags[0], "zh"));
   const prefersReducedMotion = useReducedMotion();
   const sectionIds = useMemo(() => navItems.map((item) => item.id), []);
+
+  useEffect(() => {
+    const saved = window.localStorage.getItem("site-locale");
+    if (saved === "zh" || saved === "en") {
+      setLocale(saved);
+      setActiveTag(toText(focusTags[0], saved));
+    }
+  }, []);
+
+  useEffect(() => {
+    window.localStorage.setItem("site-locale", locale);
+  }, [locale]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -55,36 +92,47 @@ export function HomePage() {
     return () => observer.disconnect();
   }, [sectionIds]);
 
-  const tagStream = [...focusTags, ...focusTags.slice(0, 6)];
+  const navItemsLocalized = navItems.map((item) => ({ id: item.id, label: item.label[locale] }));
+  const tagStream = [...focusTags, ...focusTags.slice(0, 6)].map((item) => item[locale]);
+  const tint = sectionTint[activeSection] ?? sectionTint.hero;
 
   return (
     <>
       <CustomCursor />
-      <StickyNav items={navItems} activeId={activeSection} />
+      <motion.div
+        className="pointer-events-none fixed inset-0 z-0"
+        animate={{ opacity: 1 }}
+        style={{ backgroundImage: tint }}
+        transition={{ duration: 0.65, ease: [0.2, 0.9, 0.2, 1] }}
+      />
+      <StickyNav
+        items={navItemsLocalized}
+        activeId={activeSection}
+        language={locale}
+        onToggleLanguage={() => setLocale((prev) => (prev === "zh" ? "en" : "zh"))}
+      />
 
-      <main className="relative mx-auto max-w-[1200px] px-4 pb-16 pt-24 md:px-8 md:pt-28">
+      <main className="relative z-10 mx-auto max-w-[1200px] px-4 pb-16 pt-24 md:px-8 md:pt-28">
         <section id="hero" className="scroll-mt-28 border-b border-white/10 pb-14 md:pb-16">
           <div className="grid items-end gap-6 lg:grid-cols-[1.1fr_0.9fr]">
             <SectionReveal>
-              <p className="mb-4 text-xs uppercase tracking-[0.22em] text-muted">Research-Oriented Portfolio</p>
+              <p className="mb-4 text-xs uppercase tracking-[0.22em] text-muted">{toText(uiText.heroEyebrow, locale)}</p>
               <motion.h1
                 initial={prefersReducedMotion ? undefined : { opacity: 0, y: 28, clipPath: "inset(0 0 100% 0)" }}
                 animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0, clipPath: "inset(0 0 0% 0)" }}
                 transition={{ duration: 1, ease: [0.19, 0.9, 0.2, 1] }}
                 className="text-5xl font-semibold leading-[0.9] tracking-[-0.03em] text-text md:text-7xl lg:text-8xl"
               >
-                {identity.name}
+                {toText(identity.name, locale)}
               </motion.h1>
               <div className="mt-5 grid gap-1 text-sm text-muted md:text-base">
-                <p>{identity.university}</p>
-                <p>{identity.major}</p>
+                <p>{toText(identity.university, locale)}</p>
+                <p>{toText(identity.major, locale)}</p>
               </div>
-              <p className="mt-7 max-w-xl text-sm leading-relaxed text-muted md:text-base">
-                A modern academic single-page interface designed for computer science and research expression.
-              </p>
+              <p className="mt-7 max-w-xl text-sm leading-relaxed text-muted md:text-base">{toText(uiText.heroPitch, locale)}</p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <MagneticButton href="#research" label="Explore" />
-                <MagneticButton href="#contact" label="Contact" variant="ghost" />
+                <MagneticButton href="#research" label={toText(uiText.explore, locale)} />
+                <MagneticButton href="#contact" label={toText(uiText.contact, locale)} variant="ghost" />
               </div>
             </SectionReveal>
 
@@ -100,23 +148,23 @@ export function HomePage() {
                 <div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_90%,rgba(208,255,0,0.1),transparent_42%)] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
                 <div className="relative grid gap-4">
                   <div className="flex items-center justify-between text-xs uppercase tracking-[0.16em] text-muted">
-                    <span>Identity Preview</span>
+                    <span>{toText(uiText.identityPreview, locale)}</span>
                     <motion.span whileHover={prefersReducedMotion ? undefined : { x: 4, rotate: 5 }}>↗</motion.span>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-surface2/80 p-5">
-                    <p className="text-xs uppercase tracking-[0.16em] text-muted">Current Identity</p>
-                    <p className="mt-2 text-xl text-text md:text-2xl">{identity.name}</p>
-                    <p className="mt-2 text-sm text-muted">{identity.university}</p>
-                    <p className="text-sm text-muted">{identity.major}</p>
+                    <p className="text-xs uppercase tracking-[0.16em] text-muted">{toText(uiText.currentIdentity, locale)}</p>
+                    <p className="mt-2 text-xl text-text md:text-2xl">{toText(identity.name, locale)}</p>
+                    <p className="mt-2 text-sm text-muted">{toText(identity.university, locale)}</p>
+                    <p className="text-sm text-muted">{toText(identity.major, locale)}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
-                    {["Research", "Portfolio", "Interactive", "Academic"].map((item) => (
+                    {["Research", "Portfolio", "Interactive", "Academic"].map((item, index) => (
                       <button
                         key={item}
                         data-cursor="link"
                         className="rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs uppercase tracking-[0.14em] text-muted transition-all hover:-translate-y-0.5 hover:border-active/70 hover:text-active"
                       >
-                        {item}
+                        {locale === "zh" ? ["研究", "主页", "交互", "学术"][index] : item}
                       </button>
                     ))}
                   </div>
@@ -128,12 +176,12 @@ export function HomePage() {
 
         <section id="focus" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Selected Focus"
-            title="Selected Focus"
-            subtitle="Interactive tags with draggable behavior. Hover and drag to explore direction clusters."
+            eyebrow={toText(uiText.section.focus.eyebrow, locale)}
+            title={toText(uiText.section.focus.title, locale)}
+            subtitle={toText(uiText.section.focus.subtitle, locale)}
           />
           <div className="mt-6">
-            <DraggableTrack hint="Drag to explore" autoScroll>
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
               <div className="grid grid-flow-col grid-rows-2 gap-3">
                 {tagStream.map((tag, index) => {
                   const isActive = activeTag === tag;
@@ -160,21 +208,26 @@ export function HomePage() {
 
         <section id="about" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="About"
-            title="About"
-            subtitle="A restrained block for personal introduction and future narrative."
+            eyebrow={toText(uiText.section.about.eyebrow, locale)}
+            title={toText(uiText.section.about.title, locale)}
+            subtitle={toText(uiText.section.about.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
             <SectionReveal className="rounded-[1.2rem] border border-white/12 bg-surface/75 p-5 md:p-6">
-              <p className="text-lg leading-relaxed text-text">Placeholder academic introduction paragraph.</p>
+              <p className="text-lg leading-relaxed text-text">{locale === "zh" ? "个人学术简介占位段落。" : "Placeholder academic introduction paragraph."}</p>
               <p className="mt-4 text-sm leading-relaxed text-muted">
-                Placeholder description for research interests, current study direction, and future goals.
+                {locale === "zh"
+                  ? "研究兴趣、当前学习方向与未来目标的占位描述。"
+                  : "Placeholder description for research interests, current study direction, and future goals."}
               </p>
             </SectionReveal>
             <SectionReveal delay={0.08} className="rounded-[1.2rem] border border-white/12 bg-surface2/75 p-5 md:p-6">
-              <p className="text-xs uppercase tracking-[0.16em] text-muted">Profile Highlights</p>
+              <p className="text-xs uppercase tracking-[0.16em] text-muted">{locale === "zh" ? "个人亮点" : "Profile Highlights"}</p>
               <ul className="mt-4 space-y-2">
-                {["Placeholder point one", "Placeholder point two", "Placeholder point three"].map((item) => (
+                {(locale === "zh"
+                  ? ["占位要点一", "占位要点二", "占位要点三"]
+                  : ["Placeholder point one", "Placeholder point two", "Placeholder point three"]
+                ).map((item) => (
                   <li
                     key={item}
                     className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-muted transition-all hover:border-active/60 hover:text-text"
@@ -189,40 +242,40 @@ export function HomePage() {
 
         <section id="research" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Research"
-            title="Research"
-            subtitle="Core research directions presented as high-interaction cards with reserved links for future detail pages."
+            eyebrow={toText(uiText.section.research.eyebrow, locale)}
+            title={toText(uiText.section.research.title, locale)}
+            subtitle={toText(uiText.section.research.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-2">
             {researchCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} index={index} scale={index === 0 ? "lg" : "md"} />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="resume" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Resume"
-            title="Resume"
-            subtitle="Placeholder resume architecture with list-oriented cards for timeline and capability sections."
+            eyebrow={toText(uiText.section.resume.eyebrow, locale)}
+            title={toText(uiText.section.resume.title, locale)}
+            subtitle={toText(uiText.section.resume.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {resumeCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} compact index={index} scale="sm" />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale="sm" ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="awards" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Awards & Honors"
-            title="Awards & Honors"
-            subtitle="Bento-style placeholders for future honors, recognitions, and distinctions."
+            eyebrow={toText(uiText.section.awards.eyebrow, locale)}
+            title={toText(uiText.section.awards.title, locale)}
+            subtitle={toText(uiText.section.awards.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-6 md:grid-rows-2">
             {awardsCards.map((item, index) => (
-              <div key={item.title} className={index === 0 ? "md:col-span-3 md:row-span-2" : index === 1 ? "md:col-span-3" : "md:col-span-3"}>
-                <PlaceholderCardItem item={item} compact={index !== 0} index={index} scale={index === 0 ? "lg" : "sm"} />
+              <div key={item.title.en} className={index === 0 ? "md:col-span-3 md:row-span-2" : "md:col-span-3"}>
+                <PlaceholderCardItem item={toCard(item, locale)} compact={index !== 0} index={index} scale={index === 0 ? "lg" : "sm"} ctaLabel={toText(uiText.view, locale)} />
               </div>
             ))}
           </div>
@@ -230,44 +283,44 @@ export function HomePage() {
 
         <section id="leadership" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Leadership"
-            title="Leadership"
-            subtitle="Structured placeholders prepared for leadership experiences and team-oriented contributions."
+            eyebrow={toText(uiText.section.leadership.eyebrow, locale)}
+            title={toText(uiText.section.leadership.title, locale)}
+            subtitle={toText(uiText.section.leadership.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {leadershipCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} compact index={index} scale={index === 1 ? "md" : "sm"} />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale={index === 1 ? "md" : "sm"} ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="volunteer" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Volunteer Service"
-            title="Volunteer Service"
-            subtitle="Future-facing service records and outreach activities presented in a balanced split layout."
+            eyebrow={toText(uiText.section.volunteer.eyebrow, locale)}
+            title={toText(uiText.section.volunteer.title, locale)}
+            subtitle={toText(uiText.section.volunteer.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
             {volunteerCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} compact index={index} scale="md" />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale="md" ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="papers" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Papers"
-            title="Papers"
-            subtitle="A full-bleed horizontal band prepared for publication cards and manuscript previews."
+            eyebrow={toText(uiText.section.papers.eyebrow, locale)}
+            title={toText(uiText.section.papers.title, locale)}
+            subtitle={toText(uiText.section.papers.subtitle, locale)}
           />
           <div className="mt-6 -mx-4 px-4 md:-mx-8 md:px-8">
-            <DraggableTrack hint="Drag to explore papers" autoScroll>
+            <DraggableTrack hint={locale === "zh" ? "拖动探索论文" : "Drag to explore papers"} autoScroll>
               {papersCards.map((item, index) => (
                 <div
-                  key={item.title}
+                  key={item.title.en}
                   className={`shrink-0 ${index % 3 === 0 ? "w-[300px] md:w-[390px]" : index % 3 === 1 ? "w-[260px] md:w-[320px]" : "w-[280px] md:w-[350px]"}`}
                 >
-                  <PlaceholderCardItem item={item} index={index} scale={index % 3 === 0 ? "lg" : "md"} />
+                  <PlaceholderCardItem item={toCard(item, locale)} index={index} scale={index % 3 === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
                 </div>
               ))}
             </DraggableTrack>
@@ -276,42 +329,42 @@ export function HomePage() {
 
         <section id="blog" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="Blog"
-            title="Blog"
-            subtitle="Placeholder editorial cards for future articles and research notes."
+            eyebrow={toText(uiText.section.blog.eyebrow, locale)}
+            title={toText(uiText.section.blog.title, locale)}
+            subtitle={toText(uiText.section.blog.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
             {blogCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} compact index={index} scale={index === 0 ? "md" : "sm"} />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale={index === 0 ? "md" : "sm"} ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="github" className="scroll-mt-28 border-b border-white/10 py-12 md:py-14">
           <HeadingReveal
-            eyebrow="GitHub & Projects"
-            title="GitHub & Projects"
-            subtitle="Placeholder project matrix prepared for repositories, demos, and engineering showcases."
+            eyebrow={toText(uiText.section.github.eyebrow, locale)}
+            title={toText(uiText.section.github.title, locale)}
+            subtitle={toText(uiText.section.github.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {githubProjectCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title} item={item} compact={false} index={index} scale={index === 0 ? "lg" : "md"} />
+              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact={false} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
             ))}
           </div>
         </section>
 
         <section id="contact" className="scroll-mt-28 pt-12 md:pt-14">
           <HeadingReveal
-            eyebrow="Contact"
-            title="Contact"
-            subtitle="A clean endpoint with placeholders for email, GitHub, and academic contact channels."
+            eyebrow={toText(uiText.section.contact.eyebrow, locale)}
+            title={toText(uiText.section.contact.title, locale)}
+            subtitle={toText(uiText.section.contact.subtitle, locale)}
           />
           <div className="mt-6 rounded-[1.5rem] border border-white/12 bg-surface/80 p-4 md:p-6">
             <div className="grid gap-4 md:grid-cols-3">
               {[
-                { title: "Email", value: "Placeholder contact channel" },
-                { title: "GitHub", value: "Placeholder profile channel" },
-                { title: "University", value: identity.university }
+                { title: locale === "zh" ? "邮箱" : "Email", value: locale === "zh" ? "联系方式占位" : "Placeholder contact channel" },
+                { title: "GitHub", value: locale === "zh" ? "主页渠道占位" : "Placeholder profile channel" },
+                { title: locale === "zh" ? "学校" : "University", value: toText(identity.university, locale) }
               ].map((item) => (
                 <motion.button
                   key={item.title}
@@ -322,7 +375,7 @@ export function HomePage() {
                   <p className="text-xs uppercase tracking-[0.16em] text-muted">{item.title}</p>
                   <p className="mt-2 text-sm text-text">{item.value}</p>
                   <p className="mt-4 text-xs uppercase tracking-[0.16em] text-muted transition-colors group-hover:text-active">
-                    Placeholder action ↗
+                    {toText(uiText.placeholderAction, locale)} ↗
                   </p>
                 </motion.button>
               ))}

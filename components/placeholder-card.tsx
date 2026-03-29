@@ -1,14 +1,20 @@
 ﻿"use client";
 
 import { motion, useReducedMotion } from "framer-motion";
-import type { PlaceholderCard } from "@/data/site";
 import { MOTION } from "@/lib/design-tokens";
+
+type PlaceholderCard = {
+  title: string;
+  subtitle: string;
+  badge?: string;
+};
 
 type PlaceholderCardItemProps = {
   item: PlaceholderCard;
   index?: number;
   compact?: boolean;
   scale?: "sm" | "md" | "lg";
+  ctaLabel?: string;
 };
 
 const scaleMap = {
@@ -17,7 +23,13 @@ const scaleMap = {
   lg: "min-h-[245px]"
 };
 
-export function PlaceholderCardItem({ item, index = 0, compact = false, scale = "md" }: PlaceholderCardItemProps) {
+export function PlaceholderCardItem({
+  item,
+  index = 0,
+  compact = false,
+  scale = "md",
+  ctaLabel = "View"
+}: PlaceholderCardItemProps) {
   const prefersReducedMotion = useReducedMotion();
   const heightClass = compact ? "min-h-[150px]" : scaleMap[scale];
 
@@ -44,7 +56,7 @@ export function PlaceholderCardItem({ item, index = 0, compact = false, scale = 
         </div>
         <p className="text-sm leading-relaxed text-muted transition-colors group-hover:text-[#d8d1c6]">{item.subtitle}</p>
         <div className="mt-auto flex items-center gap-2 text-xs uppercase tracking-[0.16em] text-muted">
-          <span>View</span>
+          <span>{ctaLabel}</span>
           <motion.span
             className="text-base"
             animate={undefined}
