@@ -47,6 +47,8 @@ function toCard(item: LocalizedCard, locale: Locale) {
   };
 }
 
+const railWidths = ["w-[280px] md:w-[360px]", "w-[260px] md:w-[320px]", "w-[300px] md:w-[390px]", "w-[250px] md:w-[330px]"];
+
 export function HomePage() {
   const [activeSection, setActiveSection] = useState("hero");
   const [locale, setLocale] = useState<Locale>("zh");
@@ -163,17 +165,6 @@ export function HomePage() {
                       </div>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    {["Research", "Portfolio", "Interactive", "Academic"].map((item, index) => (
-                      <button
-                        key={item}
-                        data-cursor="link"
-                        className="rounded-xl border border-white/12 bg-white/[0.04] px-3 py-2 text-xs uppercase tracking-[0.14em] text-muted transition-all hover:-translate-y-0.5 hover:border-active/70 hover:text-active"
-                      >
-                        {locale === "zh" ? ["研究", "主页", "交互", "学术"][index] : item}
-                      </button>
-                    ))}
-                  </div>
                 </div>
               </motion.aside>
             </SectionReveal>
@@ -252,10 +243,14 @@ export function HomePage() {
             title={toText(uiText.section.research.title, locale)}
             subtitle={toText(uiText.section.research.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            {researchCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
-            ))}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              {researchCards.map((item, index) => (
+                <div key={item.title.en} className={`shrink-0 ${railWidths[index % railWidths.length]}`}>
+                  <PlaceholderCardItem item={toCard(item, locale)} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
+                </div>
+              ))}
+            </DraggableTrack>
           </div>
         </section>
 
@@ -265,10 +260,14 @@ export function HomePage() {
             title={toText(uiText.section.resume.title, locale)}
             subtitle={toText(uiText.section.resume.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {resumeCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale="sm" ctaLabel={toText(uiText.view, locale)} />
-            ))}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              {resumeCards.map((item, index) => (
+                <div key={item.title.en} className={`shrink-0 ${railWidths[(index + 1) % railWidths.length]}`}>
+                  <PlaceholderCardItem item={toCard(item, locale)} compact index={index} scale="sm" ctaLabel={toText(uiText.view, locale)} />
+                </div>
+              ))}
+            </DraggableTrack>
           </div>
         </section>
 
@@ -278,12 +277,14 @@ export function HomePage() {
             title={toText(uiText.section.awards.title, locale)}
             subtitle={toText(uiText.section.awards.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-6 md:grid-rows-2">
-            {awardsCards.map((item, index) => (
-              <div key={item.title.en} className={index === 0 ? "md:col-span-3 md:row-span-2" : "md:col-span-3"}>
-                <PlaceholderCardItem item={toCard(item, locale)} compact={index !== 0} index={index} scale={index === 0 ? "lg" : "sm"} ctaLabel={toText(uiText.view, locale)} />
-              </div>
-            ))}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              {awardsCards.map((item, index) => (
+                <div key={item.title.en} className={`shrink-0 ${railWidths[(index + 2) % railWidths.length]}`}>
+                  <PlaceholderCardItem item={toCard(item, locale)} compact={index !== 0} index={index} scale={index === 0 ? "lg" : "sm"} ctaLabel={toText(uiText.view, locale)} />
+                </div>
+              ))}
+            </DraggableTrack>
           </div>
         </section>
 
@@ -293,10 +294,14 @@ export function HomePage() {
             title={toText(uiText.section.leadership.title, locale)}
             subtitle={toText(uiText.section.leadership.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {leadershipCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale={index === 1 ? "md" : "sm"} ctaLabel={toText(uiText.view, locale)} />
-            ))}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              {leadershipCards.map((item, index) => (
+                <div key={item.title.en} className={`shrink-0 ${railWidths[(index + 3) % railWidths.length]}`}>
+                  <PlaceholderCardItem item={toCard(item, locale)} compact index={index} scale={index === 1 ? "md" : "sm"} ctaLabel={toText(uiText.view, locale)} />
+                </div>
+              ))}
+            </DraggableTrack>
           </div>
         </section>
 
@@ -306,10 +311,14 @@ export function HomePage() {
             title={toText(uiText.section.volunteer.title, locale)}
             subtitle={toText(uiText.section.volunteer.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
-            {volunteerCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale="md" ctaLabel={toText(uiText.view, locale)} />
-            ))}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              {volunteerCards.map((item, index) => (
+                <div key={item.title.en} className={`shrink-0 ${railWidths[index % railWidths.length]}`}>
+                  <PlaceholderCardItem item={toCard(item, locale)} compact index={index} scale="md" ctaLabel={toText(uiText.view, locale)} />
+                </div>
+              ))}
+            </DraggableTrack>
           </div>
         </section>
 
@@ -319,58 +328,65 @@ export function HomePage() {
             title={toText(uiText.section.papers.title, locale)}
             subtitle={toText(uiText.section.papers.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
-            <a
-              href="/papers/PAHSJP-301005-G11-final.pdf"
-              target="_blank"
-              rel="noreferrer"
-              data-cursor="link"
-              className="group relative overflow-hidden rounded-[1.2rem] border border-white/12 min-h-[280px]"
-            >
-              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper1-cover.jpg')" }} />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/85" />
-              <div className="absolute inset-0 p-5">
-                <div className="inline-flex rounded-full border border-white/25 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.14em] text-text">
-                  {locale === "zh" ? "论文原文 PDF" : "Original PDF"}
+          <div className="mt-6">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
+              <a
+                href="/papers/PAHSJP-301005-G11-final.pdf"
+                target="_blank"
+                rel="noreferrer"
+                data-cursor="link"
+                className="group relative w-[320px] md:w-[620px] min-h-[300px] shrink-0 overflow-hidden rounded-[1.2rem] border border-white/12"
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper1-cover.jpg')" }} />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/90" />
+                <div className="absolute inset-x-4 bottom-4 rounded-xl border border-white/20 bg-black/45 p-4 backdrop-blur-md">
+                  <p className="text-xs uppercase tracking-[0.14em] text-active">{locale === "zh" ? "论文原文 PDF" : "Original PDF"}</p>
+                  <h3 className="mt-2 line-clamp-2 text-lg leading-tight text-text">Machine Learning-based Downscaling of Sentinel-5P CO over Beijing</h3>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
+                    {[
+                      "Sentinel-5P",
+                      "LightGBM",
+                      "CatBoost",
+                      "Ridge",
+                      locale === "zh" ? "城市 CO" : "Urban CO"
+                    ].map((k) => (
+                      <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
+                        {k}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="mt-4 text-xl leading-tight text-text">
-                  Machine Learning-based Downscaling of Sentinel-5P CO over Beijing
-                </h3>
-                <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
-                  {["Sentinel-5P", "LightGBM", "CatBoost", "Ridge", "Urban CO"].map((k) => (
-                    <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
-                      {k}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </a>
+              </a>
 
-            <a
-              href="/papers/1110-Wu-CPCI-final.docx"
-              target="_blank"
-              rel="noreferrer"
-              data-cursor="link"
-              className="group relative overflow-hidden rounded-[1.2rem] border border-white/12 min-h-[280px]"
-            >
-              <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper2-cover.jpg')" }} />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/30 to-black/85" />
-              <div className="absolute inset-0 p-5">
-                <div className="inline-flex rounded-full border border-white/25 bg-black/35 px-3 py-1 text-xs uppercase tracking-[0.14em] text-text">
-                  {locale === "zh" ? "论文原文 DOCX" : "Original DOCX"}
+              <a
+                href="/papers/1110-Wu-CPCI-final.docx"
+                target="_blank"
+                rel="noreferrer"
+                data-cursor="link"
+                className="group relative w-[320px] md:w-[620px] min-h-[300px] shrink-0 overflow-hidden rounded-[1.2rem] border border-white/12"
+              >
+                <div className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105" style={{ backgroundImage: "url('/assets/paper2-cover.jpg')" }} />
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/20 to-black/90" />
+                <div className="absolute inset-x-4 bottom-4 rounded-xl border border-white/20 bg-black/45 p-4 backdrop-blur-md">
+                  <p className="text-xs uppercase tracking-[0.14em] text-active">{locale === "zh" ? "论文原文 DOCX" : "Original DOCX"}</p>
+                  <h3 className="mt-2 line-clamp-2 text-lg leading-tight text-text">
+                    Multi-stage Elimination-Optimization for Cooperative Smoke-Screen Scheduling Against Multiple Missiles
+                  </h3>
+                  <div className="mt-3 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
+                    {[
+                      locale === "zh" ? "烟幕" : "Smoke Screen",
+                      "UAV Scheduling",
+                      locale === "zh" ? "几何遮蔽" : "Geometric Occlusion",
+                      locale === "zh" ? "多导弹防御" : "Multi-Missile Defense"
+                    ].map((k) => (
+                      <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
+                        {k}
+                      </span>
+                    ))}
+                  </div>
                 </div>
-                <h3 className="mt-4 text-xl leading-tight text-text">
-                  Multi-stage Elimination-Optimization for Cooperative Smoke-Screen Scheduling Against Multiple Missiles
-                </h3>
-                <div className="mt-4 flex flex-wrap gap-2 text-xs text-[#d7d0c5]">
-                  {["Smoke Screen", "UAV Scheduling", "Geometric Occlusion", "Multi-Missile Defense", "Optimization"].map((k) => (
-                    <span key={k} className="rounded-full border border-white/20 bg-black/35 px-2 py-1">
-                      {k}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            </a>
+              </a>
+            </DraggableTrack>
           </div>
         </section>
 
@@ -386,6 +402,7 @@ export function HomePage() {
               title={locale === "zh" ? "CSDN 文章自动同步（按浏览量排序）" : "CSDN Auto Sync (sorted by views)"}
               frameLinkLabel={locale === "zh" ? "博客主页" : "Blog Home"}
               emptyText={locale === "zh" ? "未抓取到文章，请确认 CSDN 主页链接。" : "No posts fetched. Please verify CSDN profile URL."}
+              dragHint={toText(uiText.dragHint, locale)}
             />
           </div>
         </section>
@@ -402,6 +419,7 @@ export function HomePage() {
               title={locale === "zh" ? "GitHub 项目自动同步（按热度排序）" : "GitHub Projects Auto Sync (sorted by popularity)"}
               frameLinkLabel={locale === "zh" ? "GitHub 主页" : "GitHub Home"}
               emptyText={locale === "zh" ? "未抓取到项目，请确认 GitHub 用户名。" : "No repositories fetched. Please verify GitHub username."}
+              dragHint={toText(uiText.dragHint, locale)}
             />
           </div>
         </section>
@@ -413,7 +431,7 @@ export function HomePage() {
             subtitle={toText(uiText.section.contact.subtitle, locale)}
           />
           <div className="mt-6 rounded-[1.5rem] border border-white/12 bg-surface/80 p-4 md:p-6">
-            <div className="grid gap-4 md:grid-cols-3">
+            <DraggableTrack hint={toText(uiText.dragHint, locale)} autoScroll>
               {[
                 { title: locale === "zh" ? "邮箱" : "Email", value: locale === "zh" ? "联系方式占位" : "Placeholder contact channel" },
                 { title: "GitHub", value: locale === "zh" ? "主页渠道占位" : "Placeholder profile channel" },
@@ -423,7 +441,7 @@ export function HomePage() {
                   key={item.title}
                   data-cursor="link"
                   whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.02 }}
-                  className="group rounded-[1.1rem] border border-white/10 bg-surface2/70 p-5 text-left transition-all hover:border-active/60 hover:shadow-[0_16px_38px_rgba(0,0,0,0.4)]"
+                  className="group w-[280px] md:w-[360px] shrink-0 rounded-[1.1rem] border border-white/10 bg-surface2/70 p-5 text-left transition-all hover:border-active/60 hover:shadow-[0_16px_38px_rgba(0,0,0,0.4)]"
                 >
                   <p className="text-xs uppercase tracking-[0.16em] text-muted">{item.title}</p>
                   <p className="mt-2 text-sm text-text">{item.value}</p>
@@ -432,10 +450,11 @@ export function HomePage() {
                   </p>
                 </motion.button>
               ))}
-            </div>
+            </DraggableTrack>
           </div>
         </section>
       </main>
     </>
   );
 }
+

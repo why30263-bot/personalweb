@@ -16,8 +16,8 @@
   arrow: {
     transition: { type: "spring", stiffness: 420, damping: 24 }
   },
-  cursorRing: { stiffness: 620, damping: 44, mass: 0.2 },
-  cursorDot: { stiffness: 1000, damping: 54, mass: 0.08 }
+  cursorRing: { stiffness: 980, damping: 54, mass: 0.12 },
+  cursorDot: { stiffness: 1400, damping: 64, mass: 0.06 }
 };
 
 export const DESIGN = {
@@ -41,3 +41,4 @@ export const CHIP_WIDTHS = [
   "min-w-[170px]",
   "min-w-[140px]"
 ];
+

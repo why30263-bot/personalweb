@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import { DraggableTrack } from "@/components/draggable-track";
 import { motion, useReducedMotion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
 
@@ -21,15 +22,15 @@ type SyncCardWallProps = {
   title: string;
   frameLinkLabel: string;
   emptyText: string;
+  dragHint: string;
 };
 
-function cardClass(index: number) {
-  if (index % 5 === 0) return "md:col-span-2 md:row-span-2 min-h-[260px]";
-  if (index % 3 === 0) return "md:col-span-2 min-h-[210px]";
-  return "min-h-[180px]";
+function cardWidth(index: number) {
+  const widths = ["w-[280px] md:w-[330px]", "w-[300px] md:w-[380px]", "w-[260px] md:w-[320px]", "w-[320px] md:w-[420px]"];
+  return widths[index % widths.length];
 }
 
-export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: SyncCardWallProps) {
+export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText, dragHint }: SyncCardWallProps) {
   const [data, setData] = useState<SyncResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const prefersReducedMotion = useReducedMotion();
@@ -79,7 +80,7 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
       ) : items.length === 0 ? (
         <p className="text-sm text-muted">{emptyText}</p>
       ) : (
-        <div className="grid gap-3 md:grid-cols-4 md:auto-rows-[120px]">
+        <DraggableTrack hint={dragHint} autoScroll className="border-white/10 bg-[#0f0f0f]/65">
           {items.map((item, index) => (
             <motion.a
               key={`${item.url}-${index}`}
@@ -87,8 +88,8 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
               target="_blank"
               rel="noreferrer"
               data-cursor="link"
-              whileHover={prefersReducedMotion ? undefined : { y: -4, scale: 1.015 }}
-              className={`group relative overflow-hidden rounded-[1rem] border border-white/12 bg-surface2/80 ${cardClass(index)}`}
+              whileHover={prefersReducedMotion ? undefined : { y: -6, scale: 1.025 }}
+              className={`group relative ${cardWidth(index)} min-h-[250px] overflow-hidden rounded-[1.1rem] border border-white/12 bg-surface2/80`}
             >
               <div
                 className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105"
@@ -98,10 +99,10 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
                     : "radial-gradient(circle at 30% 20%, rgba(201,106,43,0.35), rgba(18,18,18,0.9))"
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/10 to-black/75" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/20 to-black/80" />
               <div className="absolute inset-x-0 bottom-0 p-3">
-                <div className="rounded-lg border border-white/15 bg-black/30 px-3 py-2 backdrop-blur-md">
-                  <p className="line-clamp-2 text-sm font-medium text-[#f4efe6]">{item.title}</p>
+                <div className="rounded-lg border border-white/15 bg-black/38 px-3 py-2.5 backdrop-blur-md">
+                  <p className="line-clamp-2 text-sm font-medium leading-snug text-[#f4efe6]">{item.title}</p>
                   <p className="mt-1 text-xs text-[#c8c2b8]">
                     {typeof item.views === "number" ? `Views ${item.views}` : typeof item.stars === "number" ? `Stars ${item.stars}` : "Open"}
                   </p>
@@ -109,8 +110,9 @@ export function SyncCardWall({ endpoint, title, frameLinkLabel, emptyText }: Syn
               </div>
             </motion.a>
           ))}
-        </div>
+        </DraggableTrack>
       )}
     </div>
   );
 }
+

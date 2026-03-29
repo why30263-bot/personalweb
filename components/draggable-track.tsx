@@ -1,7 +1,7 @@
 ﻿"use client";
 
 import { motion, useAnimationFrame, useMotionValue, useReducedMotion } from "framer-motion";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Children, type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
 type DraggableTrackProps = {
   children: ReactNode;
@@ -13,23 +13,29 @@ type DraggableTrackProps = {
 export function DraggableTrack({ children, className = "", hint = "Drag to explore", autoScroll = false }: DraggableTrackProps) {
   const viewportRef = useRef<HTMLDivElement | null>(null);
   const trackRef = useRef<HTMLDivElement | null>(null);
+  const setRef = useRef<HTMLDivElement | null>(null);
   const hoveredRef = useRef(false);
   const x = useMotionValue(0);
   const [maxDrag, setMaxDrag] = useState(0);
+  const [setWidth, setSetWidth] = useState(0);
   const [dragging, setDragging] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const items = useMemo(() => Children.toArray(children), [children]);
+  const shouldLoop = autoScroll && !prefersReducedMotion && items.length > 1;
 
   useEffect(() => {
     const update = () => {
       const viewportWidth = viewportRef.current?.offsetWidth ?? 0;
       const trackWidth = trackRef.current?.scrollWidth ?? 0;
+      const singleSetWidth = setRef.current?.scrollWidth ?? 0;
       setMaxDrag(Math.max(0, trackWidth - viewportWidth));
+      setSetWidth(singleSetWidth);
     };
 
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, []);
+  }, [items.length]);
 
   useEffect(() => {
     if (x.get() < -maxDrag) x.set(-maxDrag);
@@ -37,8 +43,20 @@ export function DraggableTrack({ children, className = "", hint = "Drag to explo
 
   useAnimationFrame((_, delta) => {
     if (!autoScroll || prefersReducedMotion || dragging || hoveredRef.current || maxDrag <= 0) return;
-    const next = x.get() - delta * 0.018;
-    x.set(Math.abs(next) > maxDrag ? 0 : next);
+    const next = x.get() - delta * 0.022;
+
+    if (shouldLoop && setWidth > 0) {
+      if (next <= -setWidth) {
+        x.set(next + setWidth);
+        return;
+      }
+      if (next >= 0) {
+        x.set(next - setWidth);
+        return;
+      }
+    }
+
+    x.set(Math.max(-maxDrag, Math.min(0, next)));
   });
 
   const onHover = (value: boolean) => {
@@ -69,14 +87,25 @@ export function DraggableTrack({ children, className = "", hint = "Drag to explo
         style={{ x }}
         className="flex w-max gap-4 p-4 md:gap-6 md:p-6"
         drag={prefersReducedMotion ? false : "x"}
-        dragConstraints={{ left: -maxDrag, right: 0 }}
+        dragConstraints={{ left: shouldLoop && setWidth > 0 ? -setWidth : -maxDrag, right: 0 }}
         dragMomentum={!prefersReducedMotion}
         dragElastic={0.08}
         onDragStart={() => setDragging(true)}
-        onDragEnd={() => setDragging(false)}
+        onDragEnd={() => {
+          setDragging(false);
+          if (shouldLoop && setWidth > 0) {
+            const current = x.get();
+            if (current <= -setWidth) x.set(current + setWidth);
+            if (current > 0) x.set(current - setWidth);
+          }
+        }}
       >
-        {children}
+        <div ref={setRef} className="flex w-max gap-4 md:gap-6">
+          {items}
+        </div>
+        {shouldLoop ? <div className="flex w-max gap-4 md:gap-6">{items}</div> : null}
       </motion.div>
     </div>
   );
 }
+
