@@ -4,13 +4,14 @@ import {
   awardsCards,
   blogCards,
   focusTags,
-  githubProjectCards,
   identity,
   leadershipCards,
   navItems,
-  papersCards,
   researchCards,
   resumeCards,
+  syncedBlogCards,
+  syncedGithubCards,
+  syncedPaperCards,
   type Locale,
   type LocalizedCard,
   type LocalizedText,
@@ -315,12 +316,14 @@ export function HomePage() {
           />
           <div className="mt-6 -mx-4 px-4 md:-mx-8 md:px-8">
             <DraggableTrack hint={locale === "zh" ? "拖动探索论文" : "Drag to explore papers"} autoScroll>
-              {papersCards.map((item, index) => (
+              {syncedPaperCards.map((item, index) => (
                 <div
                   key={item.title.en}
                   className={`shrink-0 ${index % 3 === 0 ? "w-[300px] md:w-[390px]" : index % 3 === 1 ? "w-[260px] md:w-[320px]" : "w-[280px] md:w-[350px]"}`}
                 >
-                  <PlaceholderCardItem item={toCard(item, locale)} index={index} scale={index % 3 === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
+                  <a href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
+                    <PlaceholderCardItem item={toCard(item, locale)} index={index} scale={index % 3 === 0 ? "lg" : "md"} ctaLabel={locale === "zh" ? "打开" : "Open"} />
+                  </a>
                 </div>
               ))}
             </DraggableTrack>
@@ -334,8 +337,10 @@ export function HomePage() {
             subtitle={toText(uiText.section.blog.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {blogCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact index={index} scale={index === 0 ? "md" : "sm"} ctaLabel={toText(uiText.view, locale)} />
+            {syncedBlogCards.map((item, index) => (
+              <a key={item.title.en} href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
+                <PlaceholderCardItem item={toCard(item, locale)} compact index={index} scale={index === 0 ? "md" : "sm"} ctaLabel={locale === "zh" ? "访问" : "Visit"} />
+              </a>
             ))}
           </div>
         </section>
@@ -347,8 +352,10 @@ export function HomePage() {
             subtitle={toText(uiText.section.github.subtitle, locale)}
           />
           <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {githubProjectCards.map((item, index) => (
-              <PlaceholderCardItem key={item.title.en} item={toCard(item, locale)} compact={false} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={toText(uiText.view, locale)} />
+            {syncedGithubCards.map((item, index) => (
+              <a key={item.title.en} href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
+                <PlaceholderCardItem item={toCard(item, locale)} compact={false} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={locale === "zh" ? "访问" : "Visit"} />
+              </a>
             ))}
           </div>
         </section>

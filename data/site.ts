@@ -16,6 +16,10 @@ export type LocalizedCard = {
   badge?: LocalizedText;
 };
 
+export type LocalizedLinkedCard = LocalizedCard & {
+  url: string;
+};
+
 export const identity = {
   name: {
     en: "Hubery Wu",
@@ -285,4 +289,73 @@ export const githubProjectCards: LocalizedCard[] = [
   { title: { en: "Project Placeholder 02", zh: "项目占位 02" }, subtitle: { en: "Placeholder repository and project brief.", zh: "仓库与项目简介占位文本。" }, badge: { en: "Project", zh: "项目" } },
   { title: { en: "Project Placeholder 03", zh: "项目占位 03" }, subtitle: { en: "Placeholder repository and project brief.", zh: "仓库与项目简介占位文本。" }, badge: { en: "Project", zh: "项目" } },
   { title: { en: "Project Placeholder 04", zh: "项目占位 04" }, subtitle: { en: "Placeholder repository and project brief.", zh: "仓库与项目简介占位文本。" }, badge: { en: "Project", zh: "项目" } }
+];
+
+export const syncedBlogCards: LocalizedLinkedCard[] = [
+  {
+    title: { en: "CSDN Profile · why30263-bot", zh: "CSDN 主页 · why30263-bot" },
+    subtitle: {
+      en: "Official technical blog profile synchronized to this portfolio.",
+      zh: "已同步到主页的官方技术博客账号入口。"
+    },
+    badge: { en: "CSDN", zh: "博客" },
+    url: "https://blog.csdn.net/why30263-bot"
+  },
+  {
+    title: {
+      en: "Research Note Publishing Channel",
+      zh: "科研笔记发布通道"
+    },
+    subtitle: {
+      en: "Use this entry to access your latest CSDN research posts.",
+      zh: "通过该入口访问你最新发布的 CSDN 科研文章。"
+    },
+    badge: { en: "Article", zh: "文章" },
+    url: "https://blog.csdn.net/why30263-bot"
+  }
+];
+
+export const syncedGithubCards: LocalizedLinkedCard[] = [
+  {
+    title: { en: "GitHub Profile · why30263-bot", zh: "GitHub 主页 · why30263-bot" },
+    subtitle: {
+      en: "Official GitHub account synchronized to portfolio.",
+      zh: "已同步到主页的官方 GitHub 账号入口。"
+    },
+    badge: { en: "GitHub", zh: "账号" },
+    url: "https://github.com/why30263-bot"
+  },
+  {
+    title: { en: "Portfolio Repository", zh: "主页仓库" },
+    subtitle: {
+      en: "Source code repository for this academic portfolio website.",
+      zh: "当前学术主页网站的源码仓库。"
+    },
+    badge: { en: "Repository", zh: "仓库" },
+    url: "https://github.com/why30263-bot/personalweb"
+  }
+];
+
+export const syncedPaperCards: LocalizedLinkedCard[] = [
+  {
+    title: {
+      en: "Machine Learning-based Downscaling of Sentinel-5P CO over Beijing",
+      zh: "基于机器学习的北京 Sentinel-5P CO 降尺度研究"
+    },
+    subtitle: {
+      en: "LightGBM/CatBoost/Ridge comparison with rolling monthly validation; 3 km daily CO mapping over Beijing.",
+      zh: "采用 LightGBM/CatBoost/Ridge 与滚动月度验证，在北京实现 3 km 日尺度近地面 CO 估计。"
+    },
+    badge: { en: "Paper", zh: "论文" },
+    url: "https://blog.csdn.net/why30263-bot"
+  },
+  {
+    title: { en: "Paper Archive Entry", zh: "论文归档入口" },
+    subtitle: {
+      en: "This slot is prepared for DOI / journal / PDF public link updates.",
+      zh: "该位置预留用于后续 DOI、期刊页面或公开 PDF 链接。"
+    },
+    badge: { en: "Archive", zh: "归档" },
+    url: "https://github.com/why30263-bot"
+  }
 ];
