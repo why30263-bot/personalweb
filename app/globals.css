@@ -1,0 +1,73 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: #0b0b0b;
+  color: #f4efe6;
+  font-family: var(--font-body), sans-serif;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  cursor: default;
+  background-image:
+    radial-gradient(circle at 85% 15%, rgba(201, 106, 43, 0.18), transparent 36%),
+    radial-gradient(circle at 10% 22%, rgba(208, 255, 0, 0.08), transparent 42%),
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: auto, auto, 42px 42px, 42px 42px;
+  background-position: center, center, center, center;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-display), sans-serif;
+  letter-spacing: -0.015em;
+}
+
+::selection {
+  background: rgba(208, 255, 0, 0.28);
+  color: #0b0b0b;
+}
+
+@media (pointer: fine) {
+  a,
+  button,
+  [role="button"] {
+    cursor: none;
+  }
+
+  body {
+    cursor: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html,
+  body {
+    scroll-behavior: auto;
+  }
+
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
