@@ -1,7 +1,7 @@
 ﻿import { NextResponse } from "next/server";
 import * as cheerio from "cheerio";
 
-const PROFILE_URL = process.env.CSDN_PROFILE_URL || "https://blog.csdn.net/why30263-bot";
+const PROFILE_URL = process.env.CSDN_PROFILE_URL || "https://blog.csdn.net/2604_95682899?type=blog";
 
 type BlogCard = {
   title: string;
