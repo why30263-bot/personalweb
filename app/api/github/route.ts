@@ -1,6 +1,13 @@
 ﻿import { NextResponse } from "next/server";
 
 const USERNAME = process.env.GITHUB_USERNAME || "why30263-bot";
+const PINNED = (
+  process.env.GITHUB_PINNED_REPOS ||
+  "cooperative-smoke-screen-scheduling-reproduction,personalweb"
+)
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
 
 type RepoItem = {
   name: string;
@@ -36,7 +43,7 @@ export async function GET() {
       private: boolean;
     }>;
 
-    const items: RepoItem[] = repos
+    const mapped: RepoItem[] = repos
       .filter((r) => !r.private && !r.fork)
       .map((r) => ({
         name: r.name,
@@ -46,8 +53,12 @@ export async function GET() {
         cover: `https://opengraph.githubassets.com/1/${r.owner.login}/${r.name}`,
         updatedAt: r.updated_at
       }))
-      .sort((a, b) => (b.stars !== a.stars ? b.stars - a.stars : +new Date(b.updatedAt) - +new Date(a.updatedAt)))
-      .slice(0, 12);
+      .sort((a, b) => (b.stars !== a.stars ? b.stars - a.stars : +new Date(b.updatedAt) - +new Date(a.updatedAt)));
+
+    const pinnedSet = new Set(PINNED);
+    const pinnedItems = mapped.filter((i) => pinnedSet.has(i.name));
+    const rest = mapped.filter((i) => !pinnedSet.has(i.name));
+    const items: RepoItem[] = [...pinnedItems, ...rest].slice(0, 12);
 
     return NextResponse.json({
       profileUrl: `https://github.com/${USERNAME}`,
