@@ -2,16 +2,12 @@
 
 import {
   awardsCards,
-  blogCards,
   focusTags,
   identity,
   leadershipCards,
   navItems,
   researchCards,
   resumeCards,
-  syncedBlogCards,
-  syncedGithubCards,
-  syncedPaperCards,
   type Locale,
   type LocalizedCard,
   type LocalizedText,
@@ -25,8 +21,10 @@ import { MagneticButton } from "@/components/magnetic-button";
 import { PlaceholderCardItem } from "@/components/placeholder-card";
 import { SectionReveal } from "@/components/section-reveal";
 import { StickyNav } from "@/components/sticky-nav";
+import { SyncCardWall } from "@/components/sync-card-wall";
 import { CHIP_WIDTHS } from "@/lib/design-tokens";
 import { motion, useReducedMotion } from "framer-motion";
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 const sectionTint: Record<string, string> = {
@@ -154,9 +152,16 @@ export function HomePage() {
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-surface2/80 p-5">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted">{toText(uiText.currentIdentity, locale)}</p>
-                    <p className="mt-2 text-xl text-text md:text-2xl">{toText(identity.name, locale)}</p>
-                    <p className="mt-2 text-sm text-muted">{toText(identity.university, locale)}</p>
-                    <p className="text-sm text-muted">{toText(identity.major, locale)}</p>
+                    <div className="mt-3 flex items-center gap-4">
+                      <div className="relative h-16 w-16 overflow-hidden rounded-full border border-white/20">
+                        <Image src="/assets/profile.jpg" alt={toText(identity.name, locale)} fill className="object-cover" />
+                      </div>
+                      <div>
+                        <p className="text-xl text-text md:text-2xl">{toText(identity.name, locale)}</p>
+                        <p className="mt-1 text-sm text-muted">{toText(identity.university, locale)}</p>
+                        <p className="text-sm text-muted">{toText(identity.major, locale)}</p>
+                      </div>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-3">
                     {["Research", "Portfolio", "Interactive", "Academic"].map((item, index) => (
@@ -314,19 +319,35 @@ export function HomePage() {
             title={toText(uiText.section.papers.title, locale)}
             subtitle={toText(uiText.section.papers.subtitle, locale)}
           />
-          <div className="mt-6 -mx-4 px-4 md:-mx-8 md:px-8">
-            <DraggableTrack hint={locale === "zh" ? "拖动探索论文" : "Drag to explore papers"} autoScroll>
-              {syncedPaperCards.map((item, index) => (
-                <div
-                  key={item.title.en}
-                  className={`shrink-0 ${index % 3 === 0 ? "w-[300px] md:w-[390px]" : index % 3 === 1 ? "w-[260px] md:w-[320px]" : "w-[280px] md:w-[350px]"}`}
-                >
-                  <a href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
-                    <PlaceholderCardItem item={toCard(item, locale)} index={index} scale={index % 3 === 0 ? "lg" : "md"} ctaLabel={locale === "zh" ? "打开" : "Open"} />
-                  </a>
-                </div>
-              ))}
-            </DraggableTrack>
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <a href="/papers/PAHSJP-301005-G11-final.pdf" target="_blank" rel="noreferrer" data-cursor="link">
+              <PlaceholderCardItem
+                item={{
+                  title:
+                    locale === "zh"
+                      ? "Machine Learning-based Downscaling of Sentinel-5P CO over Beijing"
+                      : "Machine Learning-based Downscaling of Sentinel-5P CO over Beijing",
+                  subtitle:
+                    locale === "zh"
+                      ? "论文原文 PDF（终稿）：LightGBM、CatBoost、Ridge 对比，滚动月度验证，北京 3 km CO 降尺度。"
+                      : "Original paper PDF (final): LightGBM/CatBoost/Ridge comparison with rolling monthly validation and 3 km CO downscaling over Beijing.",
+                  badge: locale === "zh" ? "论文原文" : "Original PDF"
+                }}
+                scale="lg"
+                ctaLabel={locale === "zh" ? "打开论文" : "Open Paper"}
+              />
+            </a>
+            <PlaceholderCardItem
+              item={{
+                title: locale === "zh" ? "论文摘要与贡献" : "Paper Summary & Contributions",
+                subtitle:
+                  locale === "zh"
+                    ? "核心发现：树模型显著优于线性基线；在严格时序验证下实现稳定城市尺度近地面 CO 估计。"
+                    : "Key finding: tree ensembles outperform linear baseline and provide robust city-scale near-surface CO estimation under strict temporal validation."
+              }}
+              scale="md"
+              ctaLabel={locale === "zh" ? "摘要" : "Summary"}
+            />
           </div>
         </section>
 
@@ -336,12 +357,13 @@ export function HomePage() {
             title={toText(uiText.section.blog.title, locale)}
             subtitle={toText(uiText.section.blog.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            {syncedBlogCards.map((item, index) => (
-              <a key={item.title.en} href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
-                <PlaceholderCardItem item={toCard(item, locale)} compact index={index} scale={index === 0 ? "md" : "sm"} ctaLabel={locale === "zh" ? "访问" : "Visit"} />
-              </a>
-            ))}
+          <div className="mt-6">
+            <SyncCardWall
+              endpoint="/api/blog"
+              title={locale === "zh" ? "CSDN 文章自动同步（按浏览量排序）" : "CSDN Auto Sync (sorted by views)"}
+              frameLinkLabel={locale === "zh" ? "博客主页" : "Blog Home"}
+              emptyText={locale === "zh" ? "未抓取到文章，请确认 CSDN 主页链接。" : "No posts fetched. Please verify CSDN profile URL."}
+            />
           </div>
         </section>
 
@@ -351,12 +373,13 @@ export function HomePage() {
             title={toText(uiText.section.github.title, locale)}
             subtitle={toText(uiText.section.github.subtitle, locale)}
           />
-          <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {syncedGithubCards.map((item, index) => (
-              <a key={item.title.en} href={item.url} target="_blank" rel="noreferrer" data-cursor="link">
-                <PlaceholderCardItem item={toCard(item, locale)} compact={false} index={index} scale={index === 0 ? "lg" : "md"} ctaLabel={locale === "zh" ? "访问" : "Visit"} />
-              </a>
-            ))}
+          <div className="mt-6">
+            <SyncCardWall
+              endpoint="/api/github"
+              title={locale === "zh" ? "GitHub 项目自动同步（按热度排序）" : "GitHub Projects Auto Sync (sorted by popularity)"}
+              frameLinkLabel={locale === "zh" ? "GitHub 主页" : "GitHub Home"}
+              emptyText={locale === "zh" ? "未抓取到项目，请确认 GitHub 用户名。" : "No repositories fetched. Please verify GitHub username."}
+            />
           </div>
         </section>
 
