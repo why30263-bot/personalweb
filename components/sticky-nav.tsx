@@ -18,7 +18,7 @@ export function StickyNav({ items, activeId }: StickyNavProps) {
   };
 
   return (
-    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-base/70 backdrop-blur-xl">
+    <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-canvas/70 backdrop-blur-xl">
       <nav className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-3 md:px-8">
         <button
           className="text-sm font-semibold uppercase tracking-[0.18em] text-muted transition-colors hover:text-active"

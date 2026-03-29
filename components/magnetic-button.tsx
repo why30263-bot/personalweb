@@ -19,7 +19,7 @@ export function MagneticButton({ href, label, variant = "primary" }: MagneticBut
     const rect = ref.current.getBoundingClientRect();
     const x = event.clientX - rect.left - rect.width / 2;
     const y = event.clientY - rect.top - rect.height / 2;
-    ref.current.style.transform = `translate(${x * 0.08}px, ${y * 0.08}px)`;
+    ref.current.style.transform = `translate(${x * 0.09}px, ${y * 0.09}px)`;
   };
 
   const onLeave = () => {
@@ -31,11 +31,11 @@ export function MagneticButton({ href, label, variant = "primary" }: MagneticBut
     "group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm tracking-wide transition-all duration-300";
   const skin =
     variant === "primary"
-      ? "border-accent/70 bg-accent/90 text-base hover:border-active hover:bg-active hover:text-base"
-      : "border-white/20 bg-white/5 text-text hover:border-active hover:bg-white/10";
+      ? "border-accent/80 bg-accent/90 text-[#111] hover:-translate-y-0.5 hover:border-active hover:bg-active hover:shadow-[0_10px_25px_rgba(208,255,0,0.18)]"
+      : "border-white/25 bg-white/5 text-text hover:-translate-y-0.5 hover:border-active/70 hover:bg-white/10";
 
   return (
-    <motion.div whileHover={prefersReducedMotion ? undefined : { scale: 1.02, y: -2 }}>
+    <motion.div whileHover={prefersReducedMotion ? undefined : { scale: 1.02 }}>
       <Link
         ref={ref}
         href={href}
@@ -48,8 +48,8 @@ export function MagneticButton({ href, label, variant = "primary" }: MagneticBut
         <motion.span
           className="text-xs"
           initial={false}
-          whileHover={prefersReducedMotion ? undefined : { x: 4, rotate: 3 }}
-          transition={{ type: "spring", stiffness: 400, damping: 24 }}
+          whileHover={prefersReducedMotion ? undefined : { x: 5, rotate: 4 }}
+          transition={{ type: "spring", stiffness: 420, damping: 24 }}
         >
           ↗
         </motion.span>
